@@ -1,0 +1,73 @@
+#!/usr/bin/env Rscript
+
+#R LIBRARIES
+library(optparse)
+library(smoof)
+library(omnioptr)
+
+#ARGUMENTS
+option_list = list(
+  make_option("--instance", type = "character", default = NULL, help = "instance"),
+  make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
+  make_option("--seed", type = "numeric", default = 0, help = "The random seed"),
+  #Add parameters here
+  make_option("--pop_size", type = "numeric", default = 4L),
+  make_option("--p_cross", type = "numeric", default = 0.6, help = ""),
+  make_option("--p_mut", type = "numeric", default = 0.1, help = ""),
+  make_option("--eta_cross", type = "numeric", default = 20, help = ""),
+  make_option("--eta_mut", type = "numeric", default = 20, help = ""),
+  make_option("--mate", type = "character", default = "normal", help = "[normal, restricted]"),
+  make_option("--delta", type = "numeric", default = 0.001, help = ""),
+  make_option("--var_space_niching", type = "character", default = "0", help = ""),
+  make_option("--obj_space_niching", type = "character", default = "1", help = ""),
+  make_option("--init", type = "character", default = "random", help = "[random, lhs]")
+)
+
+opt_parser = OptionParser(option_list=option_list)
+opt = parse_args(opt_parser)
+print(opt)
+
+# SET SEED
+set.seed(opt$seed)
+
+# INSTANCE LOADING
+parse_instance_file = function(filename){
+    content = readChar(filename, nchars=file.info(filename)$size)
+    return(eval(parse(text=content)))
+}
+
+obj.fn = parse_instance_file(opt$instance)
+obj.fn = smoof::addCountingWrapper(obj.fn)
+#print(paste(c(smoof::getRefPoint(obj.fn))))
+writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), collapse=" ")))
+
+fn.lower = smoof::getLowerBoxConstraints(obj.fn)
+fn.upper = smoof::getUpperBoxConstraints(obj.fn)
+
+#ALGORITHM (OmniOptimizer)
+writeLines('c ALGORITHM OmniOptimizer')
+
+budget = floor(opt$budget / opt$pop_size) # number of generations
+optimizer = omniopt(
+  obj.fn,
+  pop.size = 4 * opt$pop_size, # NOTE: requireed to always be a multiple of 4
+  n.gens = budget,
+  frequency =  budget, # do not store intermediate results
+  p.cross = opt$p_cross,
+  p.mut = opt$p_mut,
+  eta.cross = opt$eta_cross,
+  eta.mut = opt$eta_mut,
+  mate = opt$mate,
+  delta = opt$delta,
+  var.space.niching = as.logical(as.integer(opt$var_space_niching)),
+  obj.space.niching = as.logical(as.integer(opt$obj_space_niching)),
+  init = opt$init,
+  seed = opt$seed / .Machine$integer.max, # omnioptimizer requires seed in [0,1]
+  verbose = FALSE
+)
+
+writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
+
+# Parse the solution set to a common interface
+writeLines("s SOLUTION SET")
+print(as.data.frame(t(optimizer$obj)))

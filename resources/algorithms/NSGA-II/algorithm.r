@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 
+#R LIBRARIES
 library(optparse)
 library(smoof)
 library(ecr)
 
-# ARGUMENTS
-# ===
+#ARGUMENTS
 option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
   make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
@@ -30,8 +30,7 @@ opt = parse_args(opt_parser)
 #SET SEED
 set.seed(opt$seed)
 
-# INSTANCE LOADING
-# ===
+#INSTANCE LOADING
 parse_instance_file = function(filename){
     content = readChar(filename, nchars=file.info(filename)$size)
     return(eval(parse(text=content)))
@@ -39,15 +38,14 @@ parse_instance_file = function(filename){
 
 obj.fn = parse_instance_file(opt$instance)
 obj.fn = smoof::addCountingWrapper(obj.fn)
-fn.lower = smoof::getLowerBoxConstraints(obj.fn)
-fn.upper = smoof::getUpperBoxConstraints(obj.fn)
 #print(paste(c(smoof::getRefPoint(obj.fn))))
 writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), collapse=" ")))
 
-# ARGUMENT PROCESSING
-# ===
+fn.lower = smoof::getLowerBoxConstraints(obj.fn)
+fn.upper = smoof::getUpperBoxConstraints(obj.fn)
 
-# Mutator
+#ARGUMENT PROCESSING
+#Mutator
 if (opt$mutator == "mutGauss"){
     mutator = setup(mutGauss, p=opt$mutGauss_p, sdev=opt$mutGauss_sdev, lower=fn.lower, upper=fn.upper)
 } else if (opt$mutator == "mutPolynomial"){
@@ -56,28 +54,27 @@ if (opt$mutator == "mutGauss"){
     mutator = setup(mutUniform, lower=fn.lower, upper=fn.upper)
 }
 
-# Recombinator
+#Recombinator
 if (opt$recombinator == "recSBX"){
     recombinator = setup(recSBX, eta=opt$recSBX_eta, p=opt$recSBX_p, lower=fn.lower, upper=fn.upper)
 } else {
     recombinator = setup(eval(parse(text=opt$recombinator)))
 }
 
-# ALGORITHM (SMSEMOA)
-# ===
+#ALGORITHM (SMSEMOA)
 writeLines('c ALGORITHM SMSEMOA')
 # We currently do nothing with the intermediate results, so we do not need the for-loop and can just run with the budget
-optimizer = ecr::smsemoa(
+optimizer = ecr::nsga2(
   obj.fn,
   smoof::getNumberOfObjectives(obj.fn),
-  lower=fn.lower,
-  upper=fn.upper,
+  lower = fn.lower,
+  upper = fn.upper,
   terminators = list(stopOnEvals(max.evals = opt$budget)),
   #ADD parameters here
   mu = opt$mu,
   mutator = mutator,
-  recombinator = recombinator,
-  );
+  recombinator = recombinator
+)
 
 writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 
