@@ -3,7 +3,7 @@
 #R LIBRARIES
 library(optparse)
 library(smoof)
-#library(omnioptr)
+library(omnioptr)
 
 #ARGUMENTS
 option_list = list(
@@ -18,8 +18,6 @@ option_list = list(
   make_option("--eta_mut", type = "numeric", default = 20, help = ""),
   make_option("--mate", type = "character", default = "normal", help = "[normal, restricted]"),
   make_option("--delta", type = "numeric", default = 0.001, help = ""),
-  #make_option("--var_space_niching", type = "character", default = "0", help = ""),
-  #make_option("--obj_space_niching", type = "character", default = "1", help = ""),
   make_option("--space_niching", type = "character", default = "obj", help = ""),
   make_option("--init", type = "character", default = "random", help = "[random, lhs]")
 )
