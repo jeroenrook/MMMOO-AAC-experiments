@@ -1,0 +1,23 @@
+#parameters
+# JAKOB: for tuning ranges see Lennart's master thesis (tables on p.44 and p.50) and personal correspondation
+max_local_sets [1, Inf] [1000] # maximum number of local sets
+epsilon_gradient numeric [0, Inf] [1e-8] # epsilon for gradient descent
+descent_direction_min numeric [0, Inf] [1e-8] #  in. length of MOG
+descent_step_min numeric [1e-8, 1e-2] [1e-6] # minimum step size
+descent_step_max numeric [1e-4, 100] [1e-1] # maximum step size
+descent_scale_factor numeric [1.1, 5] [2] # step size scaling factor
+descent_armijo_factor numeric [1e-6, 1e-1] [1e-4] # factor for Armijo line search
+descent_history_size integer [1, Inf] [100] # history size for nonmonotonic search
+descent_max_iter numeric [1, Inf] [1000] # maximum number of iterations for gradient descent
+explore_step_min numeric [1e-6, 100] [1e-4] # minimum step size
+explore_step_max numeric [1e-2, 100] [1e-1] # minimum step size
+explore_angle_max numeric [10, 90] [45]# # maximum angle per step
+explore_scale_factor numeric [1.1, 5] [2] # step size scaling factor
+refine_after_nstarts integer [1, 100] [100]
+refine_hv_target numeric [1e-6, 1e-1] [2e-5] # precision (relating to normalized HV, i.e. area between nadir and ideal = 1)
+
+#Conditional clauses
+
+#Forbidden clauses
+{descent_step_max > descent_step_min}
+{explore_step_max > explore_step_min}
