@@ -1,0 +1,10 @@
+#parameters
+
+# JAKOB: not sure about the parameter ranges; specified upper bounds by rule of thumb
+mu integer [1, 1000] [100] # the size of the Pareto approxiamtion set
+step_size real [1e-10, 1] [0.001] # step size
+sampling categorical {uniform, LHS, Grid} [both] # the method used in the initial sampling of the approximation set
+
+#Conditional clauses
+
+#Forbidden clauses
