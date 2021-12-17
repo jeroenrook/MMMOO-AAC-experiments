@@ -3,7 +3,7 @@
 #R LIBRARIES
 library(optparse)
 library(smoof)
-library(omnioptr)
+#library(omnioptr)
 
 #ARGUMENTS
 option_list = list(
@@ -18,8 +18,9 @@ option_list = list(
   make_option("--eta_mut", type = "numeric", default = 20, help = ""),
   make_option("--mate", type = "character", default = "normal", help = "[normal, restricted]"),
   make_option("--delta", type = "numeric", default = 0.001, help = ""),
-  make_option("--var_space_niching", type = "character", default = "0", help = ""),
-  make_option("--obj_space_niching", type = "character", default = "1", help = ""),
+  #make_option("--var_space_niching", type = "character", default = "0", help = ""),
+  #make_option("--obj_space_niching", type = "character", default = "1", help = ""),
+  make_option("--space_niching", type = "character", default = "obj", help = ""),
   make_option("--init", type = "character", default = "random", help = "[random, lhs]")
 )
 
@@ -44,6 +45,17 @@ writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), colla
 fn.lower = smoof::getLowerBoxConstraints(obj.fn)
 fn.upper = smoof::getUpperBoxConstraints(obj.fn)
 
+
+var.space.niching <- FALSE
+if(opt$space_niching == "var" || opt$space_niching == "both"){
+    var.space.niching <- TRUE
+}
+
+obj.space.niching <- FALSE
+if(opt$space_niching == "obj" || opt$space_niching == "both"){
+    obj.space.niching <- TRUE
+}
+
 #ALGORITHM (OmniOptimizer)
 writeLines('c ALGORITHM OmniOptimizer')
 
@@ -59,8 +71,8 @@ optimizer = omniopt(
   eta.mut = opt$eta_mut,
   mate = opt$mate,
   delta = opt$delta,
-  var.space.niching = as.logical(as.integer(opt$var_space_niching)),
-  obj.space.niching = as.logical(as.integer(opt$obj_space_niching)),
+  var.space.niching = var.space.niching,
+  obj.space.niching = obj.space.niching,
   init = opt$init,
   seed = opt$seed / .Machine$integer.max, # omnioptimizer requires seed in [0,1]
   verbose = FALSE
