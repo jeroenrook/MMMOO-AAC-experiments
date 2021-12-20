@@ -1,0 +1,7 @@
+ARGS="${ARGUMENTS[$SLURM_ARRAY_TASK_ID]}"
+IFS=', ' read -r -a ARGSA <<< "${ARGS}"
+
+for SEED in "${SEEDS[@]}"
+do
+  ${ARGSA[2]} --instance "${ARGSA[3]}" --budget 10000 --save_solution "tmp/${ARGSA[0]}_${ARGSA[1]}_${SEED}.RData" --seed "${SEED}"
+done
