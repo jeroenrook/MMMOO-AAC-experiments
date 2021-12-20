@@ -74,10 +74,11 @@ writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 
 # Parse the solution set to a common interface
 writeLines("s SOLUTION SET")
-# TODO: is this what we need?
-print(optimizer[, c("x1", "x2"), drop = FALSE])
+# TODO: is this what we need? We need to compute the function values ourselves
+solution_set <- t(sapply(t(optimizer[, c("x1", "x2"), drop = FALSE]), obj.fn))
+print(solution_set)
+
 if (!is.null(opt$save_solution)){
     writeLines("Save to file")
-    solution_set <- optimizer[, c("x1", "x2"), drop = FALSE]
     save(solution_set, file=opt$save_solution)
 }

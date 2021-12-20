@@ -88,16 +88,16 @@ writeLines("s SOLUTION SET")
 print(optimizer$pareto.front)
 if (!is.null(opt$save_solution)){
     writeLines("Save to file")
-    pareto_front <- optimizer$pareto.front
-    save(pareto_front, file=opt$save_solution)
+    solution_set <- optimizer$pareto.front
+    save(solution_set, file=opt$save_solution)
 }
 
-#Compute the performance metrics
-#HV
-pareto.matrix <- t(data.matrix(optimizer$pareto.front))
-
-print(ecr3vis::hv(pareto.matrix, smoof::getRefPoint(obj.fn)))
-#IDG+
-#print(ecr3vis::igdp(pareto.matrix))
-#SP
-print(ecr3vis::solow_polasky(pareto.matrix))
+# #Compute the performance metrics
+# #HV
+# pareto.matrix <- t(data.matrix(optimizer$pareto.front))
+#
+# print(ecr3vis::hv(pareto.matrix, smoof::getRefPoint(obj.fn)))
+# #IDG+
+# #print(ecr3vis::igdp(pareto.matrix))
+# #SP
+# print(ecr3vis::solow_polasky(pareto.matrix))

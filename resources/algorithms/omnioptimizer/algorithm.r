@@ -84,6 +84,6 @@ writeLines("s SOLUTION SET")
 print(as.data.frame(t(optimizer$obj)))
 if (!is.null(opt$save_solution)){
     writeLines("Save to file")
-    pareto_front <- as.data.frame(t(optimizer$obj))
-    save(pareto_front, file=opt$save_solution)
+    solution_set <- as.data.frame(t(optimizer$obj))
+    save(solution_set, file=opt$save_solution)
 }
