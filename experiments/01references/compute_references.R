@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
 library(smoof)
-library(ecr)
 
 set.seed(2021)
 seeds <- sample(1:100000, 10, replace=FALSE)

@@ -5,5 +5,5 @@
 #SBATCH --ntasks=1
 #SBATCH -c 1
 #SBATCH --mem=1250mb
-#SBATCH --time=00:05:00
-#SBATCH --partition=
+#SBATCH --time=00:45:00
+#SBATCH --partition=normal
