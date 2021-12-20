@@ -79,5 +79,5 @@ print(optimizer[, c("x1", "x2"), drop = FALSE])
 if (!is.null(opt$save_solution)){
     writeLines("Save to file")
     solution_set <- optimizer[, c("x1", "x2"), drop = FALSE]
-    save(pareto_front, file=solution_set)
+    save(solution_set, file=opt$save_solution)
 }

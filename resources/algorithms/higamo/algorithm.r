@@ -68,5 +68,5 @@ writeLines("s SOLUTION SET")
 print(solution_set)
 if (!is.null(opt$save_solution)){
     writeLines("Save to file")
-    save(pareto_front, file=solution_set)
+    save(solution_set, file=opt$save_solution)
 }

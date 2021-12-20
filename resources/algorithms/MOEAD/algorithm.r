@@ -1,13 +1,13 @@
 #!/usr/bin/env Rscript
 library(optparse)
 library(smoof)
-library(MOEADr)
+library(MOEADr) #devtools::install_github("fcampelo/MOEADr")
 
 # ARGUMENTS
 option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
   make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
-  make_option("--seed", type = "numeric", default = 0, help = "The random seed"),
+  make_option("--seed", type = "numeric", default = 1, help = "The random seed"),
   make_option("--save_solution", type= "character", default = NULL, "save solution set to an Rdata object"),
   #Add parameters here
   make_option("--n_weights", type = "numeric", default = 50L)
@@ -68,5 +68,5 @@ writeLines("s SOLUTION SET")
 print(solution_set)
 if (!is.null(opt$save_solution)){
     writeLines("Save to file")
-    save(pareto_front, file=solution_set)
+    save(solution_set, file=opt$save_solution)
 }
