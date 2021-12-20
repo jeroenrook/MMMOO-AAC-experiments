@@ -73,12 +73,14 @@ optimizer = runMOGSA(
 writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 
 # Parse the solution set to a common interface
+# is this what we need? No, we need to compute the function values ourselves :)
+# Checked with DTZL2, which is visualised on the MOGSA github page for comparison
+# print(optimizer[, c("x1", "x2"), drop = FALSE])
+solution_set <- as.data.frame(t(apply(optimizer[, c("x1", "x2"), drop = FALSE], 1, obj.fn)))
 writeLines("s SOLUTION SET")
-# TODO: is this what we need? We need to compute the function values ourselves
-solution_set <- t(sapply(t(optimizer[, c("x1", "x2"), drop = FALSE]), obj.fn))
 print(solution_set)
 
-if (!is.null(opt$save_solution)){
+    if (!is.null(opt$save_solution)){
     writeLines("Save to file")
     save(solution_set, file=opt$save_solution)
 }
