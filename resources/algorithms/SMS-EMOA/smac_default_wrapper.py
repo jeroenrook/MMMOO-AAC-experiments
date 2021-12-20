@@ -60,7 +60,7 @@ if __name__ == "__main__":
     for line in output_list:
         line = line.strip()
 
-        if line == "[1] \"s SOLUTION SET\"":
+        if line == "s SOLUTION SET":
             do_match = True
         if do_match and re.match(r"([-\+\d\.e]+\s*)+", line):
             objectives = re.split(r"\s+", line)

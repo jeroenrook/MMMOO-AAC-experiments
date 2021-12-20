@@ -8,6 +8,7 @@ option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
   make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
   make_option("--seed", type = "numeric", default = 0, help = "The random seed"),
+  make_option("--save_solution", type= "character", default = NULL, "save solution set to an Rdata object"),
   #Add parameters here
   make_option("--max_no_basins", type = "numeric", default = 50L),
   make_option("--max_no_steps_ls", type = "numeric", default = 500L, help = ""),
@@ -75,3 +76,8 @@ writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 writeLines("s SOLUTION SET")
 # TODO: is this what we need?
 print(optimizer[, c("x1", "x2"), drop = FALSE])
+if (!is.null(opt$save_solution)){
+    writeLines("Save to file")
+    solution_set <- optimizer[, c("x1", "x2"), drop = FALSE]
+    save(pareto_front, file=solution_set)
+}

@@ -10,6 +10,7 @@ option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
   make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
   make_option("--seed", type = "numeric", default = 0, help = "The random seed"),
+  make_option("--save_solution", type= "character", default = NULL, "save solution set to an Rdata object"),
   #Add parameters here
   make_option("--mu", type = "numeric", default=100L),
   make_option("--mutator", type = "character", default = "mutPolynomial", help = "[mutGauss, mutPolynomial, mutUniform]"),
@@ -62,7 +63,7 @@ if (opt$recombinator == "recSBX"){
 }
 
 #ALGORITHM (SMSEMOA)
-writeLines('c ALGORITHM SMSEMOA')
+writeLines('c ALGORITHM NGSA-II')
 # We currently do nothing with the intermediate results, so we do not need the for-loop and can just run with the budget
 optimizer = ecr::nsga2(
   obj.fn,
@@ -81,3 +82,8 @@ writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 # Parse the solution set to a common interface
 writeLines("s SOLUTION SET")
 print(optimizer$pareto.front)
+if (!is.null(opt$save_solution)){
+    writeLines("Save to file")
+    pareto_front <- optimizer$pareto.front
+    save(pareto_front, file=opt$save_solution)
+}
