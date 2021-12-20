@@ -38,15 +38,20 @@ for (instance in names(solutions)){
 
   #Get pareto front
   solution.matrix <- t(data.matrix(solutions[[instance]]))
+  #print(t(solution.matrix))
 
-  plot(solution.matrix$y1, solution.matrix$y2, main=instance)
+  #plot(t(solution.matrix)[1], t(solution.matrix)[2], main=instance)
 
   pareto.idx <- ecr::nondominated(solution.matrix)
   pareto.front <- as.data.frame(t(solution.matrix[, pareto.idx, drop = FALSE]))
   pareto.refpoint <- as.vector(sapply(pareto.front, max))
 
+  png(paste("plots/", instance, ".png", sep=""), width=600, height=600)
+  plot(pareto.front$y1, pareto.front$y2, main=instance)
+  dev.off()
+
 
   references[[instance]] <- list(approxfront=pareto.front, refpoint=pareto.refpoint)
 }
 
-save(references, "refdata.RData")
+save(references, file="refdata.RData")

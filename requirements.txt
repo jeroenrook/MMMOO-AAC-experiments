@@ -1,0 +1,7 @@
+devtools::install_github("jakobbossek/ecr2")
+devtools::install_github("jakobbossek/smoof")
+devtools::install_github("jakobbossek/re")
+remotes::install_github("jakobbossek/ecr3vis")
+devtools::install_github("jakobbossek/omnioptr")
+remotes::install_github("kerschke/mogsa")
+devtools::install_github("fcampelo/MOEADr")
