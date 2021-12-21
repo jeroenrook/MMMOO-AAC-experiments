@@ -5,6 +5,8 @@ library(optparse)
 library(smoof)
 library(moleopt)
 
+source("utils.r")
+
 #ARGUMENTS
 option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
@@ -37,13 +39,7 @@ opt = parse_args(opt_parser)
 set.seed(opt$seed)
 
 #INSTANCE LOADING
-parse_instance_file = function(filename){
-  content = readChar(filename, nchars=file.info(filename)$size)
-  return(eval(parse(text=content)))
-}
-
-obj.fn = parse_instance_file(opt$instance)
-obj.fn = smoof::addCountingWrapper(obj.fn)
+obj.fn = parse_instance_file(opt$instance) #utils.R
 writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), collapse=" ")))
 
 fn.lower = smoof::getLowerBoxConstraints(obj.fn)
@@ -122,10 +118,8 @@ optimizer =  run_mole(
 writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 
 # Parse the solution set to a common interface
-writeLines("s SOLUTION SET")
-print(optimizer$pareto.front)
-if (!is.null(opt$save_solution)){
-    writeLines("Save to file")
-    solution_set <- optimizer$pareto.front
-    save(solution_set, file=opt$save_solution)
-}
+solution_set <- optimizer$pareto.front
+print_and_save_solution_set(solution_set)  #utils.R
+
+measures <- compute_performance_metrics(solution_set, obj.fn, opt$instance) #utils
+print_measures(measures) #utils

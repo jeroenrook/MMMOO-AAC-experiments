@@ -5,6 +5,8 @@ library(smoof)
 library(ecr)
 library(ecr3vis)
 
+source("utils.r")
+
 # ARGUMENTS
 # ===
 option_list = list(
@@ -34,13 +36,7 @@ set.seed(opt$seed)
 
 # INSTANCE LOADING
 # ===
-parse_instance_file = function(filename){
-    content = readChar(filename, nchars=file.info(filename)$size)
-    return(eval(parse(text=content)))
-}
-
-obj.fn = parse_instance_file(opt$instance)
-obj.fn = smoof::addCountingWrapper(obj.fn)
+obj.fn = parse_instance_file(opt$instance) #utils.R
 fn.lower = smoof::getLowerBoxConstraints(obj.fn)
 fn.upper = smoof::getUpperBoxConstraints(obj.fn)
 #print(paste(c(smoof::getRefPoint(obj.fn))))
@@ -84,20 +80,8 @@ optimizer = ecr::smsemoa(
 writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 
 # Parse the solution set to a common interface
-writeLines("s SOLUTION SET")
-print(optimizer$pareto.front)
-if (!is.null(opt$save_solution)){
-    writeLines("Save to file")
-    solution_set <- optimizer$pareto.front
-    save(solution_set, file=opt$save_solution)
-}
+solution_set <- optimizer$pareto.front
+print_and_save_solution_set(solution_set)  #utils.R
 
-# #Compute the performance metrics
-# #HV
-# pareto.matrix <- t(data.matrix(optimizer$pareto.front))
-#
-# print(ecr3vis::hv(pareto.matrix, smoof::getRefPoint(obj.fn)))
-# #IDG+
-# #print(ecr3vis::igdp(pareto.matrix))
-# #SP
-# print(ecr3vis::solow_polasky(pareto.matrix))
+measures <- compute_performance_metrics(solution_set, obj.fn, opt$instance) #utils
+print_measures(measures) #utils

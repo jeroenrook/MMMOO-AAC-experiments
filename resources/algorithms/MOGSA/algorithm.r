@@ -3,6 +3,8 @@ library(optparse)
 library(smoof)
 library(mogsa) # remotes::install_github("kerschke/mogsa")
 
+source("utils.r")
+
 # ARGUMENTS
 option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
@@ -28,13 +30,7 @@ opt = parse_args(opt_parser)
 set.seed(opt$seed)
 
 #INSTANCE LOADING
-parse_instance_file = function(filename){
-  content = readChar(filename, nchars=file.info(filename)$size)
-  return(eval(parse(text=content)))
-}
-
-obj.fn = parse_instance_file(opt$instance)
-obj.fn = smoof::addCountingWrapper(obj.fn)
+obj.fn = parse_instance_file(opt$instance) #utils.R
 #print(paste(c(smoof::getRefPoint(obj.fn))))
 writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), collapse=" ")))
 
@@ -77,10 +73,7 @@ writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 # Checked with DTZL2, which is visualised on the MOGSA github page for comparison
 # print(optimizer[, c("x1", "x2"), drop = FALSE])
 solution_set <- as.data.frame(t(apply(optimizer[, c("x1", "x2"), drop = FALSE], 1, obj.fn)))
-writeLines("s SOLUTION SET")
-print(solution_set)
+print_and_save_solution_set(solution_set)  #utils.R
 
-    if (!is.null(opt$save_solution)){
-    writeLines("Save to file")
-    save(solution_set, file=opt$save_solution)
-}
+measures <- compute_performance_metrics(solution_set, obj.fn, opt$instance) #utils
+print_measures(measures) #utils
