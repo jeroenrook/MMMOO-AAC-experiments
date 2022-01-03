@@ -39,6 +39,6 @@ if __name__ == "__main__":
 
     # parse output
     measures = parse_solution_set(output_list)
-    status = "SUCCES"
+    status = "SUCCESS"
     result_line = "Result for SMAC: {}, {}, 0, {}, {}".format(status, run_time, measures["HV"], seed)
     print(result_line)
