@@ -25,9 +25,10 @@ option_list = list(
   make_option("--descent_max_iter", type = "numeric", default = 1000, help = ""),
   make_option("--explore_step_min", type = "numeric", default = 1e-4, help = ""),
   make_option("--explore_step_max", type = "numeric", default = 1e-1, help = ""),
-  make_option("--explore_scale_factor", type = "numeric", default = 45, help = ""),
-  make_option("--refine_after_nstarts", type = "numeric", default = 2, help = ""),
-  make_option("--refine_hv_target", type = "numeric", default = 100, help = "")
+  make_option("--explore_angle_max", type = "numeric", default = 45, help = ""),
+  make_option("--explore_scale_factor", type = "numeric", default = 2, help = ""),
+  make_option("--refine_after_nstarts", type = "numeric", default = 100, help = ""),
+  make_option("--refine_hv_target", type = "numeric", default = 2e-5, help = "")
 )
 
 opt_parser = OptionParser(option_list=option_list)
