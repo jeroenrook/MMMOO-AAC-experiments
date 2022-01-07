@@ -4,6 +4,7 @@
 library(optparse)
 library(smoof)
 library(moleopt)
+library(tidyverse) #reduce, %>%,
 
 source("utils.r")
 
@@ -21,7 +22,7 @@ option_list = list(
   make_option("--descent_step_max", type = "numeric", default = 1e-1, help = ""),
   make_option("--descent_scale_factor", type = "numeric", default = 2, help = ""),
   make_option("--descent_armijo_factor", type = "numeric", default = 1e-4, help = "[recCrossover, recIntermediate, recOX, recPMX, recSBX]"),
-  make_option("--recSBdescent_history_size", type = "numeric", default = 100, help = ""),
+  make_option("--descent_history_size", type = "numeric", default = 100, help = ""),
   make_option("--descent_max_iter", type = "numeric", default = 1000, help = ""),
   make_option("--explore_step_min", type = "numeric", default = 1e-4, help = ""),
   make_option("--explore_step_max", type = "numeric", default = 1e-1, help = ""),
@@ -91,16 +92,18 @@ optimizer =  run_mole(
   #   return(as.data.frame(x$dec_space))
   #   )
   # res = res %>% reduce(rbind)
-  # print(res)
-  # obj = lapply(mole_trace$sets, function(x)
-  #   return(as.data.frame(x$obj_space))
-  # )
-  # obj = obj %>% reduce(rbind)
+  #print(optimizer$sets)
+  obj = lapply(optimizer$sets, function(x)
+    return(as.data.frame(x$obj_space))
+  )
+  obj = obj %>% reduce(rbind)
 
 
-  # names(obj) <- c('y1', 'y2')
+  names(obj) <- c('y1', 'y2')
   # names(res) <- c('x1', 'x2')
   # n.rows = nrow(obj)
+
+  print(obj)
 
   # res$algorithm = rep_len('MOLE', n.rows)
   # res$prob = rep_len(smoof::getID(data$fun), n.rows)
@@ -119,7 +122,7 @@ optimizer =  run_mole(
 writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 
 # Parse the solution set to a common interface
-solution_set <- optimizer$pareto.front
+solution_set <- obj
 print_and_save_solution_set(solution_set)  #utils.R
 
 measures <- compute_performance_metrics(solution_set, obj.fn, opt$instance) #utils
