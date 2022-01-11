@@ -36,8 +36,8 @@ compute_performance_metrics <- function (solution_set, fn, instance_path){
     measures = list()
     #HV MAXIMISE, hence minimise
     measures$HV <- -ecr3vis::hv(pareto.matrix, reference.point)
-    #IDG+ MAXIMISE, hence minimise
-    measures$IDGP <- -ecr3vis::igdp(pareto.matrix, reference.front)
+    #IDG+ MINIMAISE
+    measures$IDGP <- ecr3vis::igdp(pareto.matrix, reference.front)
     #SP MAXIMISE, hence minimise
     measures$SP <- -ecr3vis::solow_polasky(pareto.matrix)
     #TODO: implement Approach for Basin Separated Evaluation
