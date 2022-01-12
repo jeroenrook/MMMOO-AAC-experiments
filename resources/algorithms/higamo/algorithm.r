@@ -1,9 +1,14 @@
 #!/usr/bin/env Rscript
 library(optparse)
 library(smoof)
-library(MOEADr)
+library(reticulate)
+
+# tell reticulate which python version to use
+#use_python("python3.9")
 
 source("utils.r")
+#source("../_shared/utils.r")
+source_python("moo_gradient.py")
 
 # ARGUMENTS
 option_list = list(
@@ -12,7 +17,10 @@ option_list = list(
   make_option("--seed", type = "numeric", default = 0, help = "The random seed"),
   make_option("--save_solution", type= "character", default = NULL, "save solution set to an Rdata object"),
   #Add parameters here
-  make_option("--n_weights", type = "numeric", default = 50L)
+  make_option("--mu", type = "numeric", default = 100L),
+  make_option("--step_size", type = "numeric", default = 0.001),
+  make_option("--sampling", type = "character", default = "uniform", help = "[uniform, LHS, grid]"),
+  make_option("--dominated_steer", type = "character", default = "NDS", help = "[M1, M2, M3, M4, M5, M6, NDS]")
 )
 
 opt_parser = OptionParser(option_list=option_list)
@@ -20,47 +28,59 @@ opt = parse_args(opt_parser)
 # print(opt)
 
 #SET SEED
+# JAKOB: do we need to set the numpy random seed instead?
 set.seed(opt$seed)
 
 #INSTANCE LOADING
-obj.fn = parse_instance_file(opt$instance) #utils.R
+obj.fn = parse_instance_file(opt$instance) # utils.R
 #print(paste(c(smoof::getRefPoint(obj.fn))))
-writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), collapse=" ")))
+writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), collapse = " ")))
 
 fn.lower = smoof::getLowerBoxConstraints(obj.fn)
 fn.upper = smoof::getUpperBoxConstraints(obj.fn)
 
-#ALGORITHM (MOGSA)
-writeLines('c ALGORITHM MOGSA')
+#ALGORITHM (HIGA-MO)
+writeLines('c ALGORITHM HIGA-MO')
 
-make_vectorized_smoof_fun = function (myfun, ...) {
-  force(myfun)
-  function(X, ...) {
-    t(apply(X, MARGIN = 1, FUN = myfun))
+# Returns function that approximtes the gradient
+getGradientFun = function(fn, prec = 1e-8) {
+  function(x) {
+    f = fn(x)
+    n = length(x)
+    gr = lapply(seq_len(n), function(i) {
+      tmp = x
+      tmp[i] = tmp[i] + prec
+      return((fn(tmp) - f) / prec)
+    })
   }
 }
 
-problem = make_vectorized_smoof_fun(obj.fn)
-
-optimizer = moead(
-  problem = list(
-    name = 'problem',
-    xmin = fn.lower,
-    xmax = fn.upper,
-    m = 2L),
-  preset = preset_moead("original"),
-  showpars = list(show.iters = "none"),
-  stopcrit = list(list(name = "maxeval", maxeval = opt$budget)),
-  seed = opt$seed
+max.iter = floor(opt$budget / (4 * opt$mu))
+optimizer = MOO_HyperVolumeGradient( # via reticulate python interface
+  dim_d = smoof::getNumberOfParameters(obj.fn),
+  dim_o = smoof::getNumberOfObjectives(obj.fn),
+  fitness = obj.fn,
+  ref = smoof::getRefPoint(obj.fn),
+  gradient = getGradientFun(obj.fn),
+  maximize = !smoof::shouldBeMinimized(obj.fn),
+  maxiter = max.iter, # TODO: MAX.ITER / 2 / MU
+  lb = fn.lower,
+  ub = fn.upper,
+  mu = as.integer(opt$mu),
+  step_size = as.numeric(opt$step_size),
+  sampling = opt$sampling,
+  dominated_steer = opt$dominated_steer
 )
-
-solution_set = as.data.frame(optimizer$Y)
-#pareto_set = as.data.frame(res$X)
+result = optimizer$optimize()
+#print(result)
 
 writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 
-# Parse the solution set to a common interface
-print_and_save_solution_set(solution_set)  #utils.R
+pareto_set = optimizer$pop # each column is a point
+solution_set = as.data.frame(t(apply(pareto_set, 2L, obj.fn)))
 
-measures <- compute_performance_metrics(solution_set, obj.fn, opt$instance) #utils
-print_measures(measures) #utils
+# Parse the solution set to a common interface
+print_and_save_solution_set(solution_set)  # utils.R
+
+measures = compute_performance_metrics(solution_set, obj.fn, opt$instance) # utils
+print_measures(measures) # utils
