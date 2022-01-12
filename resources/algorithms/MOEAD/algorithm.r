@@ -22,13 +22,13 @@ option_list = list(
 
   make_option("--aggfun", type = "character", default = "", help="[awt, ipbi, pbi, ws, wt]"),
 
-  make_option("--variation", type = "character", default = "", help="[diffmut, localsearch, none, polymut]"),
-  make_option("--variation_diffmut_phi", type = "numeric", default = 0.5, help="Mutation parameter. Either a scalar numeric constant, or NULL for randomly chosen between 0 and 1 (independently sampled for each operation)."),
-  make_option("--variation_diffmut_basis", type = "character", default = 0.5, help="[rand, mean]"),
+  # make_option("--variation", type = "character", default = "", help="[diffmut, localsearch, none, polymut]"),
+  # make_option("--variation_diffmut_phi", type = "numeric", default = 0.5, help="Mutation parameter. Either a scalar numeric constant, or NULL for randomly chosen between 0 and 1 (independently sampled for each operation)."),
+  # make_option("--variation_diffmut_basis", type = "character", default = 0.5, help="[rand, mean]"),
 
-  make_option("--update", type = "character", default = "", help="[best, restricted, standard]"),
+  make_option("--update", type = "character", default = "standard", help="[best, restricted, standard]"),
 
-  make_option("--constraint", type = "character", default = "", help="[nmone, penalty, vbr]"),
+  # make_option("--constraint", type = "character", default = "", help="[nmone, penalty, vbr]"),
   # make_option("--scaling", type = "character", default = "", help=""),
 
   make_option("--n_weights", type = "numeric", default = 50L)
@@ -60,13 +60,14 @@ make_vectorized_smoof_fun = function (myfun, ...) {
 }
 
 problem = make_vectorized_smoof_fun(obj.fn)
-if(opt$preset == "custom"){
+if(opt$preset != "custom"){
   optimizer = moead(
     problem = list(
       name = 'problem',
       xmin = fn.lower,
       xmax = fn.upper,
       m = 2L),
+    preset   = preset_moead(opt$preset)
     showpars = list(show.iters = "none"),
     stopcrit = list(list(name = "maxeval", maxeval = opt$budget)),
     seed = opt$seed
@@ -85,15 +86,15 @@ if(opt$preset == "custom"){
     decomp    <- list(name       = opt$decomp) #TODO H and tau
   }
 
-  aggfun    <- list(name       = "wt")
-  variation <- list(list(name  = "sbx",
-                       etax  = 20, pc = 1),
-                  list(name  = "polymut",
-                       etam  = 20, pm = 0.1),
-                  list(name  = "truncate"))
-  update    <- list(name       = "standard", UseArchive = FALSE)
-  scaling   <- list(name       = "none")
-  constraint<- list(name       = "none")
+  aggfun    <- list(name       = opt$aggfun)
+  # variation <- list(list(name  = "sbx",
+  #                      etax  = 20, pc = 1),
+  #                 list(name  = "polymut",
+  #                      etam  = 20, pm = 0.1),
+  #                 list(name  = "truncate"))
+  update    <- list(name       = opt$update, UseArchive = FALSE)
+  # scaling   <- list(name       = "none")
+  # constraint<- list(name       = "none")
 
   optimizer = moead(
   problem = list(
@@ -103,7 +104,11 @@ if(opt$preset == "custom"){
     m = 2L),
   showpars = list(show.iters = "none"),
   stopcrit = list(list(name = "maxeval", maxeval = opt$budget)),
-  seed = opt$seed
+  seed = opt$seed,
+  neighbors = neighbors,
+  decomp = decomp,
+  aggfun = aggfun,
+  update = update
 )
 }
 

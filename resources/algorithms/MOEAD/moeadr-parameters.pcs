@@ -1,5 +1,25 @@
 #parameters
+preset categorical {original, original2, moead.de, custom} [original]
+neighbors categorical {lambda, x} [lambda]
+neighbors_T integer [0, 1000] [100]
+neighbors_delta_pr real [0,1] [0.5]
+decomp categorical {sld, uniform} [sld]
+decomp_H integer [0, 1000] [99]
+aggfun categorical {awt, ipbi, pbi, ws, wt} [awt]
+update categorical {best, restricted, standard} [standard]
+n_weights integer [1,1000] [50]
+
 
 #Conditional clauses
+neighbors | preset in {custom}
+neighbors_T | preset in {custom}
+neighbors_delta_p | preset in {custom}
+decomp | preset in {custom}
+decomp_H | preset in {custom}
+decomp_H | decomp in {sld}
+aggfun | preset in {custom}
+update | preset in {custom}
+n_weights | preset in {custom}
 
 #Forbidden clauses
+{decomp_H >= neighbors_T}
