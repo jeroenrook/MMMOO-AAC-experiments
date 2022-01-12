@@ -30,7 +30,6 @@ if __name__ == "__main__":
     paramstring = build_param_string(params)
 
     command = f"{solver_binary} --instance {instance} --seed {seed} --budget 5000 {paramstring}"
-    print(command)
     #print(command)
 
     # get output
