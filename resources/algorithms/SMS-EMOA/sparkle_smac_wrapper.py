@@ -28,7 +28,7 @@ if __name__ == "__main__":
     assert (len(params) % 2 == 0)  # require even number of parameters
     paramstring = build_param_string(params)
 
-    command = f"{solver_binary} --instance {instance} --seed {seed} --budget 1000 {paramstring}"
+    command = f"{solver_binary} --instance {instance} --seed {seed} --budget 5000 {paramstring}"
 
     print(command)
 
