@@ -15,13 +15,15 @@ parse_instance_file = function(filename){
     content = readChar(filename, nchars=file.info(filename)$size)
     return(eval(parse(text=content)))
 }
+print(instances)
 
 
 #Get all algorithms
 algorithms.path <- "../../resources/algorithms/"
 algorithms <- list.files(algorithms.path)
-
-
+algorithms <- algorithms[algorithms != "_shared"]
+algorithms <- algorithms[algorithms != "distribute_shared_files.sh"]
+print(algorithms)
 
 commands.list <- c()
 for (algorithm in algorithms){
@@ -32,12 +34,15 @@ for (algorithm in algorithms){
   command <- paste(algorithm.path,
                    "--instance",
                    "../../resources/instances/BiObjBBOB1",
-                   "--budget 100")
+                   "--budget 100",
+                   "--seed 1")
   writeLines(command)
   out <- system(command, ignore.stdout = TRUE, ignore.stderr = TRUE)
-  if (out != 0){
-    next
-  }
+  # if (out != 0){
+  #   writeLines("FAILED")
+  #   writeLines(out)
+  #   next
+  # }
 
 
   for (instance in instances){

@@ -5,6 +5,7 @@ library(reticulate)
 
 # tell reticulate which python version to use
 #use_python("python3.9")
+use_virtualenv("/home/r/rookj/projects/MMMOO/nenv")
 
 source("utils.r")
 #source("../_shared/utils.r")
@@ -36,6 +37,14 @@ obj.fn = parse_instance_file(opt$instance) # utils.R
 #print(paste(c(smoof::getRefPoint(obj.fn))))
 writeLines(paste("c REFERENCE POINT", paste(c(smoof::getRefPoint(obj.fn)), collapse = " ")))
 
+load("refdata.RData")
+
+reference.point <- smoof::getRefPoint(obj.fn)
+if (is.null(reference.point)){
+  instance_name <- tail(unlist(strsplit(opt$instance,"/")), n=1)
+  reference.point <- references[[instance_name]]$refpoint
+}
+
 fn.lower = smoof::getLowerBoxConstraints(obj.fn)
 fn.upper = smoof::getUpperBoxConstraints(obj.fn)
 
@@ -60,7 +69,7 @@ optimizer = MOO_HyperVolumeGradient( # via reticulate python interface
   dim_d = smoof::getNumberOfParameters(obj.fn),
   dim_o = smoof::getNumberOfObjectives(obj.fn),
   fitness = obj.fn,
-  ref = smoof::getRefPoint(obj.fn),
+  ref = reference.point,#smoof::getRefPoint(obj.fn),
   gradient = getGradientFun(obj.fn),
   maximize = !smoof::shouldBeMinimized(obj.fn),
   maxiter = max.iter, # TODO: MAX.ITER / 2 / MU

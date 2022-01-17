@@ -30,7 +30,7 @@ if __name__ == "__main__":
     paramstring = build_param_string(params)
 
     command = f"{solver_binary} --instance {instance} --seed {seed} --budget 5000 {paramstring}"
-    #print(command)
+    print(command)
 
     # get output
     start_time = time.time()
@@ -42,9 +42,16 @@ if __name__ == "__main__":
     measures = parse_solution_set(output_list)
     print(measures)
     status = "SUCCESS"
+    if measures["HV"] is None:
+        status = "CRASHED"
+        measures["HV"] = 0
+        measures["IGDP"] = 2**32-1
+        measures["SP"] = 0
+    target = "HV"
+    ##TARGET-REPLACE
     result_line = "Result for SMAC: {status}, {runtime}, {runlength}, {quality}, {seed}".format(status=status,
                                                                                       runtime=run_time,
                                                                                       runlength=0,
-                                                                                      quality=measures["HV"],
+                                                                                      quality=measures[target],
                                                                                       seed=seed)
     print(result_line)

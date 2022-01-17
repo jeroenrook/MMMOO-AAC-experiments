@@ -40,5 +40,12 @@ if __name__ == "__main__":
     # parse output
     measures = parse_solution_set(output_list)
     status = "SUCCESS"
-    result_line = "Result for SMAC: {}, {}, 0, {}, {}".format(status, run_time, measures["HV"], seed)
+    if measures["HV"] is None:
+        status = "CRASHED"
+        measures["HV"] = 0
+        measures["IGDP"] = 2 ** 32 - 1
+        measures["SP"] = 0
+    target = "HV"
+    ##TARGET-REPLACE
+    result_line = "Result for SMAC: {}, {}, 0, {}, {}".format(status, run_time, measures[target], seed)
     print(result_line)
