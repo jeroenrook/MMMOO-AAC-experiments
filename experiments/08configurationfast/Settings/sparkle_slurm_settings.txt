@@ -1,0 +1,3 @@
+--partition=normal
+--mem-per-cpu=1250
+--time-min=540
