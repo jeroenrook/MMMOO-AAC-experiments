@@ -10,7 +10,7 @@ source("utils.r")
 #ARGUMENTS
 option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
-  make_option("--budget", type = "numeric", default = 2500L, help = "The maximum number of allowed function evaluations"),
+  make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
   make_option("--visualise", type= "character", default = NULL, help = "visualise population and solution set to a pdf"),
   make_option("--seed", type = "numeric", default = 0, help = "The random seed"),
   make_option("--save_solution", type= "character", default = NULL, "save solution set to an Rdata object"),
@@ -58,7 +58,7 @@ writeLines('c ALGORITHM OmniOptimizer')
 budget = floor(opt$budget / opt$pop_size) # number of generations
 optimizer = omniopt(
   obj.fn,
-  pop.size = 4 * opt$pop_size, # NOTE: requireed to always be a multiple of 4
+  pop.size = 100,#4 * opt$pop_size, # NOTE: requireed to always be a multiple of 4
   n.gens = budget,
   frequency =  budget, # do not store intermediate results
   p.cross = opt$p_cross,

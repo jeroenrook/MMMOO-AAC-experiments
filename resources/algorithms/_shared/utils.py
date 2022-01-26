@@ -38,4 +38,13 @@ def parse_solution_set(output_list):
         m = re.match(r"s SP ([\d\.e-]+)", line)
         if do_match and m is not None:
             measure["SP"] = float(m.group(1))
+        m = re.match(r"s SPD ([\d\.e-]+)", line)
+        if do_match and m is not None:
+            measure["SPD"] = float(m.group(1))
+
+    if measure["HV"] is None:
+        measure["HV"] = None
+        measure["IGDP"] = 2**32-1
+        measure["SP"] = 0
+        measure["SPD"] = 0
     return measure

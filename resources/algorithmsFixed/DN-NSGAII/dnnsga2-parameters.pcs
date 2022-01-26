@@ -1,0 +1,13 @@
+#parameters
+#mu integer [1,1000] [100] #population size
+cf integer [1,100] [10] #crowding factor
+rec_eta integer [1,100] [15] #crowding factor
+p real [0, 1] [.7] #crowding factor
+mut_eta integer [1,100] [25] #crowding factor
+
+#Conditional clauses
+
+#Forbidden clauses
+#{cf > mu}
+#{rec_eta > mu}
+#{mut_eta > mu}

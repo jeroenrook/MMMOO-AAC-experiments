@@ -11,6 +11,7 @@ option_list = list(
   make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
   make_option("--seed", type = "numeric", default = 1, help = "The random seed"),
   make_option("--save_solution", type= "character", default = NULL, help = "save solution set to an Rdata object"),
+  make_option("--visualise", type= "character", default = NULL, help = "visualise population and solution set to a pdf"),
   #Add parameters here
   make_option("--preset", type = "character", default = "original", help="[original, original2, moead.de, custom]"),
   make_option("--neighbors", type = "character", default = "lambda", help="[lambda, x]"),
@@ -112,6 +113,7 @@ if(opt$preset != "custom"){
 )
 }
 
+population = as.data.frame(optimizer$X)
 solution_set = as.data.frame(optimizer$Y)
 #pareto_set = as.data.frame(res$X)
 
@@ -120,5 +122,5 @@ writeLines(paste("c EVALUATIONS", smoof::getNumberOfEvaluations(obj.fn)))
 # Parse the solution set to a common interface
 print_and_save_solution_set(solution_set)  #utils.R
 
-measures <- compute_performance_metrics(solution_set, obj.fn, opt$instance) #utils
+measures <- compute_performance_metrics(population, solution_set, obj.fn, opt$instance) #utils
 print_measures(measures) #utils
