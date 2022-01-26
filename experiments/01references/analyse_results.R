@@ -9,6 +9,7 @@ solutions <- list()
 
 for (res in results){
   meta.data <- unlist(strsplit(res,"_"))
+  print(meta.data)
   algorithm <- meta.data[1]
   instance <- meta.data[2]
 
@@ -44,9 +45,10 @@ for (instance in names(solutions)){
 
   pareto.idx <- ecr::nondominated(solution.matrix)
   pareto.front <- as.data.frame(t(solution.matrix[, pareto.idx, drop = FALSE]))
+  pareto.front <- pareto.front[sample(nrow(pareto.front), 100), ]
   pareto.refpoint <- as.vector(sapply(pareto.front, max))
 
-  png(paste("plots/", instance, ".png", sep=""), width=600, height=600)
+  #png(paste("plots/", instance, ".png", sep=""), width=600, height=600)
   plot(pareto.front$y1, pareto.front$y2, main=instance)
   dev.off()
 

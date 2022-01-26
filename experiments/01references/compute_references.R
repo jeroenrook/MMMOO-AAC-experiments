@@ -27,7 +27,7 @@ print(algorithms)
 
 commands.list <- c()
 for (algorithm in algorithms){
-  algorithm.path <- paste(algorithms.path,algorithm,"/algorithm.r", sep="")
+  algorithm.path <- paste(algorithms.path,algorithm,"/", sep="")
   writeLines(paste(">>>> \t", algorithm.path))
 
   #try algorithm

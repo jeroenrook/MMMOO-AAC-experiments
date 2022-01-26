@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-cd ../algorithms/SMS-EMOA
+CWD=$(pwd)
+cd ../algorithms/NSGA-II
 
 for instance in $(echo ../../instances/*)
 do
-  ./algorithm.r --budget 1000 --seed 1 --instance ${instance}
+  echo ${instance}
+  ./algorithm.r --budget 10000 --seed 1 --instance ${instance} --visualise "${CWD}/instout/$(basename ${instance}).pdf" &> "${CWD}/instout/$(basename ${instance}).txt"
 done
