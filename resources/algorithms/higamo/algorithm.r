@@ -5,7 +5,7 @@ library(reticulate)
 
 # tell reticulate which python version to use
 #use_python("python3.9")
-#use_virtualenv("/home/r/rookj/projects/MMMOO/nenv")
+# use_virtualenv("/home/r/rookj/projects/MMMOO/nenv")
 use_python("/Users/jeroen/Software/miniconda3/bin/python")
 
 source("utils.r")

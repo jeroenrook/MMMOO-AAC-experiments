@@ -10,10 +10,10 @@ source("utils.r")
 #ARGUMENTS
 option_list = list(
   make_option("--instance", type = "character", default = NULL, help = "instance"),
-  make_option("--budget", type = "numeric", default = 2500L, help = "The maximum number of allowed function evaluations"),
-  make_option("--visualise", type= "character", default = NULL, help = "visualise population and solution set to a pdf"),
+  make_option("--budget", type = "numeric", default = 20000L, help = "The maximum number of allowed function evaluations"),
   make_option("--seed", type = "numeric", default = 0, help = "The random seed"),
   make_option("--save_solution", type= "character", default = NULL, "save solution set to an Rdata object"),
+  make_option("--visualise", type= "character", default = NULL, help = "visualise population and solution set to a pdf"),
   #Add parameters here
   make_option("--pop_size", type = "numeric", default = 4L),
   make_option("--p_cross", type = "numeric", default = 0.6, help = ""),
@@ -55,7 +55,7 @@ if(opt$space_niching == "obj" || opt$space_niching == "both"){
 #ALGORITHM (OmniOptimizer)
 writeLines('c ALGORITHM OmniOptimizer')
 
-budget = floor(opt$budget / opt$pop_size) # number of generations
+budget = floor(opt$budget / (4 * opt$pop_size)) # number of generations
 optimizer = omniopt(
   obj.fn,
   pop.size = 4 * opt$pop_size, # NOTE: requireed to always be a multiple of 4

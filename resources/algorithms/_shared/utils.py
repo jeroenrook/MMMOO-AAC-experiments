@@ -32,6 +32,9 @@ def parse_solution_set(output_list):
         m = re.match(r"s HV ([\d\.e-]+)", line)
         if do_match and m is not None:
             measure["HV"] = float(m.group(1))
+        m = re.match(r"s HVN ([\d\.e-]+)", line)
+        if do_match and m is not None:
+            measure["HVN"] = float(m.group(1))
         m = re.match(r"s IGDP ([\d\.e-]+)", line)
         if do_match and m is not None:
             measure["IGDP"] = float(m.group(1))

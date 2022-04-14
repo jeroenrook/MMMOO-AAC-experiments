@@ -11,6 +11,7 @@ option_list = list(
   make_option("--budget", type = "numeric", default = 10000L, help = "The maximum number of allowed function evaluations"),
   make_option("--seed", type = "numeric", default = 1, help = "The random seed"),
   make_option("--save_solution", type= "character", default = NULL, help = "save solution set to an Rdata object"),
+  make_option("--visualise", type= "character", default = NULL, help = "visualise population and solution set to a pdf"),
   #Add parameters here
 # decomp categorical {SLD, Uniform} [SLD]
 # neighbor categorical {lambda,x} [lambda]

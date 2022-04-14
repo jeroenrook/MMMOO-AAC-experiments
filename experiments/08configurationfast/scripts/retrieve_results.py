@@ -15,7 +15,7 @@ if __name__ == "__main__":
     for solver in solvers:
         print(f"Collecting for: {solver}")
         dirs = [result_path + d for d in os.listdir(result_path) if d[:len(solver)] == solver and os.path.isdir(result_path + d)]
-        match = "outdir_\d+test_.+"
+        match = "outdir_instances_test_.+"
 
         result_df = []
         print("Found ", dirs)
@@ -35,20 +35,23 @@ if __name__ == "__main__":
             try:
                 ddf = pd.read_csv(outdir + "/" + defaultdir + "/" + "validationRunResultLineMatrix-cli-1-walltime.csv")
                 cdf = pd.read_csv(outdir + "/" + configdir + "/" + "validationRunResultLineMatrix-configuration_for_validation-walltime.csv")
-                result = {
-                    "instance":ddf["Problem Instance"][0].split("/")[-1],
-                    "default":-float(ddf["Run result line of validation config #1"][0].split(", ")[-2]),
-                    "config":-float(cdf["Run result line of validation config #1"][0].split(", ")[-2]),
-                }
 
+                configuration = ""
                 try:
                     config = open(outdir + "/configuration_for_validation.txt","r").read()
                     print(config)
-                    result["configuration"] = config
+                    configuration = config
                 except:
                     raise
 
-                result_df.append(result)
+                for i in range(len(ddf)):
+                    result = {
+                        "instance":ddf["Problem Instance"][i].split("/")[-1],
+                        "default":-float(ddf["Run result line of validation config #1"][i].split(", ")[-2]),
+                        "config":-float(cdf["Run result line of validation config #1"][i].split(", ")[-2]),
+                        "configuration":configuration
+                    }
+                    result_df.append(result)
             except:
                 print(f"Could not load {defaultdir}")
                 pass

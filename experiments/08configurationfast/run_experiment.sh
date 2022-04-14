@@ -13,7 +13,8 @@ mkdir -p -- $EXP_DIR
 cd "${BASE_DIR}/intermediates/algorithmsAllFixed"
 ./generate_algorithms.py
 
-targets=("SPD" "HV")
+#targets=("SPD" "HV" "HVN")
+targets=("HVN")
 for target in "${targets[@]}"; do
   echo $target
 

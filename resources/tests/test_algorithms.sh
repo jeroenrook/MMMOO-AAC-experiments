@@ -10,7 +10,8 @@ do
   if [[ $folder != _* ]]; then
     cd $folder
     echo $(basename $folder)
-    ./algorithm.r --budget 10000 --seed 1 --instance ../../instances/BiObjBBOB1 --visualise "${CWD}/algout/$(basename $folder).pdf" 2>&1 | tee "${CWD}/algout/$(basename $folder).txt"
+    ./algorithm.r --budget 1000 --seed 1 --instance ../../instances/BiObjBBOB1 --visualise "${CWD}/algout/$(basename $folder).pdf" &> "${CWD}/algout/$(basename $folder).txt"
+    cat "${CWD}/algout/$(basename $folder).txt" | tail -n9
     cd ..
   fi
 done
