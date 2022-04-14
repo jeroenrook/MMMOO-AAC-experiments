@@ -19,6 +19,6 @@ cd ../../experiments/09lofconfiguration
 ./do_validation.py
 #Once all jobs are finished; do
 ./make_result_table.py #this creates results.csv 
-#Run the Jupyter notebooks in 'experiments/04configurationfast' to obtain the figures presented in the paper
+#Run the Jupyter notebooks in 'experiments/08configurationfast' to obtain the figures presented in the paper
 ```
-Alternatively, just the experiments/05lofconfiguration/results.csv can be used to work with the provided notebooks.
+Alternatively, just the experiments/09lofconfiguration/results.csv can be used to work with the provided notebooks.
